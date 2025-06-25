@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Downloader</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-purple-100">
+    <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+        <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-4">
+            <span class="text-blue-600">Video</span> <span class="text-purple-600">Downloader</span>
+        </h1>
+        <p class="text-center text-gray-600 mb-8">
+            Paste video URL below to simulate download.
+        </p>
+
+        <div class="mb-6">
+            <label for="videoUrl" class="block text-gray-700 text-sm font-medium mb-2">
+                Video URL:
+            </label>
+            <input
+                type="url"
+                id="videoUrl"
+                placeholder="e.g., https://example.com/video/123"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 transition duration-200 ease-in-out"
+                aria-label="Video URL input"
+            />
+        </div>
+
+        <button
+            id="processButton"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-live="polite"
+        >
+            Process Video
+        </button>
+
+        <div id="messageBox" class="mt-6 p-4 rounded-lg text-sm hidden" role="status">
+            <!-- Messages will be displayed here -->
+        </div>
+
+        <div id="resultBox" class="mt-6 hidden">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3">Download Link:</h2>
+            <a
+                id="downloadLink"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block text-blue-600 hover:underline break-all p-3 bg-blue-50 rounded-lg border border-blue-200"
+            >
+                <!-- Download link will be displayed here -->
+            </a>
+            <button
+                id="copyButton"
+                class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                title="Copy link to clipboard"
+            >
+                Copy Link
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements
+        const videoUrlInput = document.getElementById('videoUrl');
+        const processButton = document.getElementById('processButton');
+        const messageBox = document.getElementById('messageBox');
+        const resultBox = document.getElementById('resultBox');
+        const downloadLink = document.getElementById('downloadLink');
+        const copyButton = document.getElementById('copyButton');
+
+        // Function to display messages
+        function showMessage(type, message) {
+            messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700', 'bg-blue-100', 'text-blue-700');
+            messageBox.textContent = message;
+            if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-700');
+            } else if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-700');
+            } else if (type === 'info') {
+                messageBox.classList.add('bg-blue-100', 'text-blue-700');
+            }
+        }
+
+        // Function to hide message and result boxes
+        function hideAllMessages() {
+            messageBox.classList.add('hidden');
+            resultBox.classList.add('hidden');
+            downloadLink.textContent = ''; // Clear previous link
+            downloadLink.href = '#'; // Reset href
+        }
+
+        // Event listener for the process button
+        processButton.addEventListener('click', async () => {
+            hideAllMessages(); // Clear previous states
+            const url = videoUrlInput.value.trim();
+
+            // Basic URL validation
+            if (!url) {
+                showMessage('error', 'Please enter a video URL.');
+                return;
+            }
+
+            try {
+                // Show loading message
+                showMessage('info', 'Processing video... Please wait.');
+                processButton.disabled = true;
+                processButton.textContent = 'Processing...';
+
+                // Simulate an API call to a backend
+                // In a real application, you would make a fetch request to your server-side API:
+                // const response = await fetch('/api/process-video', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify({ videoUrl: url })
+                // });
+                // const data = await response.json();
+
+                // Simulated backend response using setTimeout
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network delay
+
+                // Simulate success or failure
+                const success = Math.random() > 0.3; // 70% chance of success
+                if (success) {
+                    const simulatedDownloadUrl = `https://simulated-download.com/video-id-${Math.random().toString(36).substring(2, 15)}.mp4`;
+                    downloadLink.href = simulatedDownloadUrl;
+                    downloadLink.textContent = simulatedDownloadUrl;
+                    resultBox.classList.remove('hidden');
+                    showMessage('success', 'Video processed successfully!');
+                } else {
+                    showMessage('error', 'Failed to process video. Please try again or check the URL.');
+                }
+
+            } catch (error) {
+                console.error('Error processing video:', error);
+                showMessage('error', 'An unexpected error occurred. Please try again.');
+            } finally {
+                processButton.disabled = false;
+                processButton.textContent = 'Process Video';
+            }
+        });
+
+        // Event listener for the copy button
+        copyButton.addEventListener('click', () => {
+            const linkToCopy = downloadLink.href;
+            if (linkToCopy && linkToCopy !== '#') {
+                try {
+                    // Use document.execCommand for better iframe compatibility
+                    const textarea = document.createElement('textarea');
+                    textarea.value = linkToCopy;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    showMessage('success', 'Link copied to clipboard!');
+                    setTimeout(() => messageBox.classList.add('hidden'), 2000); // Hide message after 2 seconds
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    showMessage('error', 'Failed to copy link. Please copy manually.');
+                }
+            } else {
+                showMessage('error', 'No link to copy.');
+            }
+        });
+
+        // Initialize state on load
+        hideAllMessages();
+    </script>
+</body>
+</html>
